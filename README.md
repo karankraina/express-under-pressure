@@ -2,12 +2,15 @@
 
 Monitor your server's health and automatically respond with a "Server Under Pressure" message when certain thresholds are exceeded. This is useful for maintaining server stability under heavy load.
 
-> **Note:** This project is heavily inspired from ```@fastify/under-pressure```. Shoutout to the maintainers and collaborators of the project.
+This is an Express JS alternative for [@fastify/under-pressure](https://github.com/fastify/under-pressure). I will try to add all APIs provided in the fastify plugin in this.
+
+> **Note:** This package is heavily inspired from ```@fastify/under-pressure```. Shoutout to the maintainers and collaborators of the project.
 
 ## Features
 
 - Monitors event loop delay
 - Monitors heap memory usage
+- Monitors event loop utilization
 - Monitors resident set size (RSS) memory usage
 - Configurable thresholds for all metrics
 - Customizable response message
@@ -60,6 +63,7 @@ app.get('/', (req, res) => {
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
+```
 
 ## Middleware Options
 
@@ -69,8 +73,8 @@ The `underPressure` function takes express app instance and an options object wi
 - `maxHeapUsedBytes` (number): The maximum heap memory usage in bytes.
 - `maxRssBytes` (number): The maximum RSS memory usage in bytes.
 - `maxEventLoopUtilization` (number): The maximum event loop utilisation.
-- `message` (string): The message to send when the server is under pressure.
-- `retryAfter` (number): The value for Retry-After header..
+- `message` (string): Optional. The message to send when the server is under pressure.
+- `retryAfter` (number): Optional. The value for Retry-After header..
 
 ## Contributing
 
