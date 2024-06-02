@@ -6,7 +6,7 @@
   "type": "commonjs",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "tap test/**/*.test.ts",
+    "test": "tap test/**/*.test.ts --disable-coverage",
     "build": "tsc",
     "linter:fix": "eslint . --fix --ext .ts",
     "linter": "eslint . --ext .ts",
