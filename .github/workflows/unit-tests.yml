@@ -10,7 +10,6 @@ on:
 
 jobs:
   unit-test:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -18,23 +17,23 @@ jobs:
         node-version: [16.x, 18.x, 20.x]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run tests
-      run: npm test
+      - name: Run tests
+        run: npm test
 
-    - name: Upload coverage report
-      if: success()
-      uses: actions/upload-artifact@v2
-      with:
-        name: coverage-report
-        path: .tap/coverage/
+      - name: Upload coverage report
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: .tap/coverage/

@@ -8,7 +8,8 @@
   "scripts": {
     "test": "tap test/**/*.test.ts",
     "build": "tsc",
-    "linter": "eslint . --fix --ext .ts",
+    "linter:fix": "eslint . --fix --ext .ts",
+    "linter": "eslint . --ext .ts",
     "format": "prettier --write .",
     "lint": "npm run format && npm run linter"
   },
