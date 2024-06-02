@@ -2,6 +2,8 @@
 
 Monitor your server's health and automatically respond with a "Server Under Pressure" message when certain thresholds are exceeded. This is useful for maintaining server stability under heavy load.
 
+> **Note:** This project is heavily inspired from ```@fastify/under-pressure```. Shoutout to the maintainers and collaborators of the project.
+
 ## Features
 
 - Monitors event loop delay
