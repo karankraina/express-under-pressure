@@ -28,14 +28,14 @@ function checkEventLoopDelay(maxDelay: number): Boolean {
 
 export function underPressure(opts: MiddlewareOptions = {}): UnderPressureMiddleware {
 
-    const options = Object.assign({}, opts, defaultOptions);
+    const options = Object.assign({}, defaultOptions, opts);
 
     return function underPressureHandler(request, response, next) {
         console.log('Under Pressure working...');
         const {heapUsed, rss} = process.memoryUsage();
 
         const isEventLoopDelayed = checkEventLoopDelay(options.maxEventLoopDelay);
-        console.log({heapUsed})
+
         if (heapUsed > options.maxHeapUsedBytes || rss > options.maxRssBytes || isEventLoopDelayed) {
             response.status(503).send(options.message);
         } else {
