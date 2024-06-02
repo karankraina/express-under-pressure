@@ -1,4 +1,3 @@
-
 import { test } from 'tap';
 import express from 'express';
 import request from 'supertest';
@@ -32,4 +31,14 @@ test('middleware should block requests when RSS usage is high', async (t) => {
   const response = await request(app).get('/');
   t.equal(response.status, 503);
   t.equal(response.text, 'Server Under Pressure');
+});
+
+test('middleware should return custom response message (is passed) and circuit is open', async (t) => {
+  const app = express();
+  app.use(underPressure({ maxHeapUsedBytes: 0, message: 'Custom Message' }));
+  app.get('/', (req, res) => res.send('ok'));
+
+  const response = await request(app).get('/');
+  t.equal(response.status, 503);
+  t.equal(response.text, 'Custom Message');
 });
