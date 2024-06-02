@@ -2,9 +2,10 @@
   "name": "express-under-pressure",
   "version": "0.0.1",
   "description": "Express Under Pressure",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "tap test/**/*.test.ts",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,17 @@
   "bugs": {
     "url": "https://github.com/karankraina/express-under-pressure/issues"
   },
-  "homepage": "https://github.com/karankraina/express-under-pressure#readme"
+  "homepage": "https://github.com/karankraina/express-under-pressure#readme",
+  "devDependencies": {
+    "@types/node": "^20.13.0",
+    "@types/supertest": "^6.0.2",
+    "@types/tap": "^15.0.11",
+    "supertest": "^7.0.0",
+    "tap": "^19.0.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.21",
+    "express": "^4.19.2"
+  }
 }
