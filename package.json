@@ -1,0 +1,25 @@
+{
+  "name": "express-under-pressure",
+  "version": "0.0.1",
+  "description": "Express Under Pressure",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karankraina/express-under-pressure.git"
+  },
+  "keywords": [
+    "nodejs",
+    "expressjs",
+    "under",
+    "pressure"
+  ],
+  "author": "Karan Raina <karanraina1996@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/karankraina/express-under-pressure/issues"
+  },
+  "homepage": "https://github.com/karankraina/express-under-pressure#readme"
+}
