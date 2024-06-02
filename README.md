@@ -4,7 +4,7 @@ Monitor your server's health and automatically respond with a "Server Under Pres
 
 This is an Express JS alternative for [@fastify/under-pressure](https://github.com/fastify/under-pressure). I will try to add all APIs provided in the fastify plugin in this.
 
-> **Note:** This package is heavily inspired from ```@fastify/under-pressure```. Shoutout to the maintainers and collaborators of the project.
+> **Note:** This package is heavily inspired from `@fastify/under-pressure`. Shoutout to the maintainers and collaborators of the project.
 
 ## Features
 
@@ -89,4 +89,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 Feel free to reach out if you have any questions or need further assistance.
 
 Happy coding!
+
+```
+
 ```

@@ -37,13 +37,6 @@ export function underPressure(
   const checkMaxRssBytes = maxRssBytes > 0;
   const checkMaxEventLoopUtilization = maxEventLoopUtilization > 0;
 
-  console.log({
-    checkMaxEventLoopDelay,
-    checkMaxEventLoopUtilization,
-    checkMaxHeapUsedBytes,
-    checkMaxRssBytes,
-  });
-
   if (
     checkMaxEventLoopUtilization === false &&
     checkMaxEventLoopDelay === false &&
@@ -91,7 +84,6 @@ export function underPressure(
 
   function updateMemoryUsage() {
     const mem = process.memoryUsage();
-    console.log('updating heap used: ', mem.heapUsed);
     heapUsed = mem.heapUsed;
     rssBytes = mem.rss;
     updateEventLoopDelay();
@@ -100,7 +92,6 @@ export function underPressure(
 
   function handlePressure(request: Request, response: Response) {
     response.setHeader('Retry-After', retryAfter);
-    console.log({ message });
     response.status(SERVICE_UNAVAILABLE).send(message);
   }
 
@@ -109,7 +100,6 @@ export function underPressure(
     response: Response,
     next: NextFunction,
   ) {
-    console.log({ heapUsed });
     // TODO: Pass info about what resource caused this pressure.
     if (checkMaxEventLoopDelay && eventLoopDelay > maxEventLoopDelay) {
       return handlePressure(request, response);
