@@ -138,7 +138,7 @@ test('working with event Loop delay', async (t) => {
   underPressure(app, {
     maxEventLoopDelay: 0.3,
     retryAfter: 20,
-    sampleInterval: 100,
+    sampleInterval: 10,
   });
 
   app.get('/', (request, response) => response.send('ok'));
