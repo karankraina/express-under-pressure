@@ -1,0 +1,5 @@
+.tap/
+
+node_modules/
+
+lib/
