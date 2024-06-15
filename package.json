@@ -1,12 +1,13 @@
 {
   "name": "express-under-pressure",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Express Under Pressure",
   "main": "lib/index.js",
   "type": "commonjs",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "tap test/**/*.test.ts --disable-coverage",
+    "test:coverage": "tap test/**/*.test.ts",
     "build": "tsc",
     "linter:fix": "eslint . --fix --ext .ts",
     "linter": "eslint . --ext .ts",

@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction, Express } from 'express';
 import { performance, monitorEventLoopDelay } from 'node:perf_hooks';
+import assert from 'node:assert';
 
 const { eventLoopUtilization } = performance;
 
@@ -18,6 +19,12 @@ interface MiddlewareOptions {
   maxRssBytes?: number;
   retryAfter?: number;
   message?: string;
+  sampleInterval?: number;
+  pressureHandler?: (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) => unknown;
 }
 
 export function underPressure(
@@ -25,7 +32,7 @@ export function underPressure(
   opts: MiddlewareOptions = {},
 ): void {
   const resolution = 10;
-  const sampleInterval = 1000;
+  const sampleInterval = opts.sampleInterval || 1000;
   const maxEventLoopDelay = opts.maxEventLoopDelay || 0;
   const maxHeapUsedBytes = opts.maxHeapUsedBytes || 0;
   const maxRssBytes = opts.maxRssBytes || 0;
@@ -36,6 +43,7 @@ export function underPressure(
   const checkMaxHeapUsedBytes = maxHeapUsedBytes > 0;
   const checkMaxRssBytes = maxRssBytes > 0;
   const checkMaxEventLoopUtilization = maxEventLoopUtilization > 0;
+  const pressureHandler = opts.pressureHandler || null;
 
   if (
     checkMaxEventLoopUtilization === false &&
@@ -44,6 +52,13 @@ export function underPressure(
     checkMaxRssBytes === false
   ) {
     return;
+  }
+
+  if (pressureHandler) {
+    assert(
+      typeof pressureHandler === 'function',
+      "Invalid option! 'pressureHandler' must be of type function",
+    );
   }
 
   let heapUsed = 0;
@@ -65,16 +80,13 @@ export function underPressure(
 
   function updateEventLoopDelay() {
     eventLoopDelay = Math.max(0, histogram.mean / 1e6 - resolution);
+
     if (Number.isNaN(eventLoopDelay)) eventLoopDelay = Infinity;
     histogram.reset();
   }
 
   function updateEventLoopUtilization() {
-    if (elu) {
-      eventLoopUtilized = eventLoopUtilization(elu).utilization;
-    } else {
-      eventLoopUtilized = 0;
-    }
+    eventLoopUtilized = eventLoopUtilization(elu).utilization;
   }
 
   function beginMemoryUsageUpdate() {
@@ -90,9 +102,17 @@ export function underPressure(
     updateEventLoopUtilization();
   }
 
-  function handlePressure(request: Request, response: Response) {
-    response.setHeader('Retry-After', retryAfter);
-    response.status(SERVICE_UNAVAILABLE).send(message);
+  function handlePressure(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
+    if (pressureHandler) {
+      pressureHandler(request, response, next);
+    } else {
+      response.setHeader('Retry-After', retryAfter);
+      response.status(SERVICE_UNAVAILABLE).send(message);
+    }
   }
 
   function underPressureHandler(
@@ -102,22 +122,22 @@ export function underPressure(
   ) {
     // TODO: Pass info about what resource caused this pressure.
     if (checkMaxEventLoopDelay && eventLoopDelay > maxEventLoopDelay) {
-      return handlePressure(request, response);
+      return handlePressure(request, response, next);
     }
 
     if (checkMaxHeapUsedBytes && heapUsed > maxHeapUsedBytes) {
-      return handlePressure(request, response);
+      return handlePressure(request, response, next);
     }
 
     if (checkMaxRssBytes && rssBytes > maxRssBytes) {
-      return handlePressure(request, response);
+      return handlePressure(request, response, next);
     }
 
     if (
       checkMaxEventLoopUtilization &&
       eventLoopUtilized > maxEventLoopUtilization
     ) {
-      return handlePressure(request, response);
+      return handlePressure(request, response, next);
     }
 
     next();
