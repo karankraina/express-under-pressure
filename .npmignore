@@ -8,3 +8,4 @@ test/
 .prettierrc.json
 tsconfig.json
 benchmarks
+package-lock.json
