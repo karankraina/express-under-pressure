@@ -1,0 +1,11 @@
+.github/
+src/
+test/
+.eslintignore
+.eslintrc.json
+.gitignore
+.npmignore
+.prettierrc.json
+tsconfig.json
+benchmarks
+package-lock.json
