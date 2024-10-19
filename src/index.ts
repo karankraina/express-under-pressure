@@ -78,6 +78,25 @@ export function underPressure(
 
   const retryAfter = opts.retryAfter || 10;
 
+  function isUnderPressure() {
+    if (checkMaxEventLoopDelay && eventLoopDelay > maxEventLoopDelay) {
+      return true;
+    }
+
+    if (checkMaxHeapUsedBytes && heapUsed > maxHeapUsedBytes) {
+      return true;
+    }
+
+    if (checkMaxRssBytes && rssBytes > maxRssBytes) {
+      return true;
+    }
+
+    return (
+      checkMaxEventLoopUtilization &&
+      eventLoopUtilized > maxEventLoopUtilization
+    );
+  }
+
   function updateEventLoopDelay() {
     eventLoopDelay = Math.max(0, histogram.mean / 1e6 - resolution);
 
@@ -143,5 +162,6 @@ export function underPressure(
     next();
   }
 
+  app.locals.isUnderPressure = isUnderPressure;
   app.use(underPressureHandler);
 }
