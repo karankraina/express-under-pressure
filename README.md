@@ -53,10 +53,14 @@ underPressure(app, {
   maxEventLoopDelay: 1000, // Maximum event loop delay in milliseconds
   maxHeapUsedBytes: 200 * 1024 * 1024, // Maximum heap used in bytes
   maxRssBytes: 300 * 1024 * 1024, // Maximum RSS memory used in bytes
+  maxEventLoopUtilization: 0.98 // Maximum event loop utilisation
   message: 'Server Under Pressure', // Custom response message
 });
 
 app.get('/', (req, res) => {
+  if (app.isUnderPressure()) {
+    // Avoind heavy computations here
+  }
   res.send('Hello World!');
 });
 

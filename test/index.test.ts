@@ -150,3 +150,14 @@ test('working with event Loop delay', async (t) => {
   t.equal(response.text, 'Service Unavailable');
   t.equal(response.headers['retry-after'], '20');
 });
+
+test('isUnderPressure should be made available to app.locals', async (t) => {
+  const app = express();
+
+  underPressure(app, {
+    maxHeapUsedBytes: 100,
+    retryAfter: 20,
+  });
+
+  t.equal(typeof app.locals.isUnderPressure, 'function');
+});
