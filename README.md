@@ -58,7 +58,7 @@ underPressure(app, {
 });
 
 app.get('/', (req, res) => {
-  if (app.locals.isUnderPressure()) {
+  if (res.locals.isUnderPressure()) {
     // Avoind heavy computations here
   }
   res.send('Hello World!');

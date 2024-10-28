@@ -159,9 +159,9 @@ export function underPressure(
       return handlePressure(request, response, next);
     }
 
+    response.locals.isUnderPressure = isUnderPressure;
     next();
   }
 
-  app.locals.isUnderPressure = isUnderPressure;
   app.use(underPressureHandler);
 }

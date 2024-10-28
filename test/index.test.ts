@@ -155,9 +155,16 @@ test('isUnderPressure should be made available to app.locals', async (t) => {
   const app = express();
 
   underPressure(app, {
+    maxEventLoopDelay: 0.01,
     maxHeapUsedBytes: 100,
     retryAfter: 20,
   });
 
-  t.equal(typeof app.locals.isUnderPressure, 'function');
+  app.get('/', (request, response) => {
+    t.ok(response.locals.isUnderPressure);
+    t.equal(typeof response.locals.isUnderPressure, 'function');
+    response.end();
+  });
+
+  await request(app).get('/');
 });
