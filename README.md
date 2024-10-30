@@ -1,4 +1,10 @@
-# ExpressJS Under Pressure
+# ExpressJS Under Pressure [![Downloads](https://img.shields.io/npm/dm/express-under-pressure.svg)](https://npmjs.com/express-under-pressure) [![npm version](https://img.shields.io/npm/v/express-under-pressure.svg?style=flat)](https://www.npmjs.com/package/express-under-pressure)
+
+<p>
+    <a href="https://twitter.com/karankraina" target="_blank">
+        <img alt="Twitter: karankraina" src="https://img.shields.io/twitter/follow/karankraina.svg?style=social" />
+    </a>
+</p>
 
 Monitor your server's health and automatically respond with a "Server Under Pressure" message when certain thresholds are exceeded. This is useful for maintaining server stability under heavy load.
 
