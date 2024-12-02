@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 import request from 'supertest';
 import { promisify } from 'util';
 
-import { underPressure } from '../src/index';
+import { underPressure, underPressureReason } from '../src/index';
 
 const wait = promisify(setTimeout);
 
@@ -73,6 +73,11 @@ test('middleware should execute custom pressure handler', async (t) => {
   underPressure(app, {
     maxHeapUsedBytes: 10,
     pressureHandler: (request: Request, response: Response) => {
+      t.ok(
+        (response.locals as Record<string | symbol, unknown>)[
+          underPressureReason
+        ],
+      );
       response.setHeader('Retry-After', '10');
       response.status(STATUS).send(MESSAGE);
       return true;
