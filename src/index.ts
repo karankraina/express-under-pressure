@@ -6,6 +6,8 @@ const { eventLoopUtilization } = performance;
 
 const SERVICE_UNAVAILABLE = 503;
 
+export const underPressureReason = Symbol('underPressureReason');
+
 // const TYPE_EVENT_LOOP_DELAY = 'eventLoopDelay';
 // const TYPE_HEAP_USED_BYTES = 'heapUsedBytes';
 // const TYPE_RSS_BYTES = 'rssBytes';
@@ -139,16 +141,27 @@ export function underPressure(
     response: Response,
     next: NextFunction,
   ) {
-    // TODO: Pass info about what resource caused this pressure.
     if (checkMaxEventLoopDelay && eventLoopDelay > maxEventLoopDelay) {
+      const reason = `[Event Loop Delay]: Max Allowed: ${maxEventLoopDelay}, current: ${eventLoopDelay} `;
+      (response.locals as Record<string | symbol, unknown>)[
+        underPressureReason
+      ] = reason;
       return handlePressure(request, response, next);
     }
 
     if (checkMaxHeapUsedBytes && heapUsed > maxHeapUsedBytes) {
+      const reason = `[Max Heap Used Bytes]: Max Allowed: ${maxHeapUsedBytes}, current: ${heapUsed} `;
+      (response.locals as Record<string | symbol, unknown>)[
+        underPressureReason
+      ] = reason;
       return handlePressure(request, response, next);
     }
 
     if (checkMaxRssBytes && rssBytes > maxRssBytes) {
+      const reason = `[Max RSS Bytes]: Max Allowed: ${maxRssBytes}, current: ${rssBytes} `;
+      (response.locals as Record<string | symbol, unknown>)[
+        underPressureReason
+      ] = reason;
       return handlePressure(request, response, next);
     }
 
@@ -156,6 +169,10 @@ export function underPressure(
       checkMaxEventLoopUtilization &&
       eventLoopUtilized > maxEventLoopUtilization
     ) {
+      const reason = `[Max Event Loop Utilization]: Max Allowed: ${maxEventLoopUtilization}, current: ${eventLoopUtilized} `;
+      (response.locals as Record<string | symbol, unknown>)[
+        underPressureReason
+      ] = reason;
       return handlePressure(request, response, next);
     }
 
