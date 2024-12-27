@@ -8,9 +8,9 @@
 
 Monitor your server's health and automatically respond with a "Server Under Pressure" message when certain thresholds are exceeded. This is useful for maintaining server stability under heavy load.
 
-This is an Express JS alternative for [@fastify/under-pressure](https://github.com/fastify/under-pressure). I will try to add all APIs provided in the fastify plugin in this.
+This is an Express JS alternative for [@fastify/under-pressure](https://github.com/fastify/under-pressure). Feel free to open an issue or submit a PR if find any issue.
 
-> **Note:** This package is heavily inspired from `@fastify/under-pressure`. Shoutout to the maintainers and collaborators of the project.
+> **Note:** This package is inspired from `@fastify/under-pressure`. Shoutout to the maintainers and collaborators of the project.
 
 ## Features
 
@@ -19,7 +19,7 @@ This is an Express JS alternative for [@fastify/under-pressure](https://github.c
 - Monitors event loop utilization
 - Monitors resident set size (RSS) memory usage
 - Configurable thresholds for all metrics
-- Customizable response message
+- Customizable response message or even custom response handlers for under pressure requests.
 
 ## Installation
 
@@ -63,11 +63,11 @@ underPressure(app, {
   message: 'Server Under Pressure', // Custom response message
 });
 
-app.get('/', (req, res) => {
-  if (res.locals.isUnderPressure()) {
+app.get('/', (request, response) => {
+  if (response.locals.isUnderPressure()) {
     // Avoind heavy computations here
   }
-  res.send('Hello World!');
+  response.send('Hello World!');
 });
 
 app.listen(3000, () => {
@@ -75,15 +75,39 @@ app.listen(3000, () => {
 });
 ```
 
+You can also limit the scope of this middleware to a specific router instance.
+
+```typescript
+const router = express.Router();
+
+underPressure(router, {
+  maxEventLoopDelay: 1000, // Maximum event loop delay in milliseconds
+  maxHeapUsedBytes: 200 * 1024 * 1024, // Maximum heap used in bytes
+  maxRssBytes: 300 * 1024 * 1024, // Maximum RSS memory used in bytes
+  maxEventLoopUtilization: 0.98 // Maximum event loop utilisation
+  message: 'Server Under Pressure', // Custom response message
+});
+
+router.get('/', (request, response) => {
+  if (response.locals.isUnderPressure()) {
+    // Avoind heavy computations here
+  }
+  response.send('Hello World!');
+});
+
+```
+
+
 ## Middleware Options
 
 The `underPressure` function takes express app instance and an options object with the following properties:
 
-- `maxEventLoopDelay` (number): The maximum event loop delay in milliseconds.
-- `maxHeapUsedBytes` (number): The maximum heap memory usage in bytes.
-- `maxRssBytes` (number): The maximum RSS memory usage in bytes.
-- `maxEventLoopUtilization` (number): The maximum event loop utilisation.
+- `maxEventLoopDelay` (number): The maximum event loop delay in milliseconds. Disabled if set to 0 or undefined.
+- `maxHeapUsedBytes` (number): The maximum heap memory usage in bytes. Disabled if set to 0 or undefined.
+- `maxRssBytes` (number): The maximum RSS memory usage in bytes. Disabled if set to 0 or undefined.
+- `maxEventLoopUtilization` (number): The maximum event loop utilisation. Disabled if set to 0 or undefined.
 - `message` (string): Optional. The message to send when the server is under pressure.
+- `pressureHandler` (function): Custom handler for under-pressure requests. If set, `message` is ignored.
 - `retryAfter` (number): Optional. The value for Retry-After header..
 
 ## Contributing
