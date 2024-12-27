@@ -6,8 +6,8 @@
   "type": "commonjs",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "tap test/**/*.test.ts --disable-coverage",
-    "test:coverage": "tap test/**/*.test.ts",
+    "test": "tsc --noEmit && node --import tsx --test test/**/*test.ts",
+    "test:coverage": "tsc --noEmit && node --import tsx --test --experimental-test-coverage test/**/*test.ts",
     "build": "tsc",
     "linter:fix": "eslint . --fix --ext .ts",
     "linter": "eslint . --ext .ts",
@@ -34,7 +34,6 @@
     "@types/express": "^4.17.21",
     "@types/node": "^20.13.0",
     "@types/supertest": "^6.0.2",
-    "@types/tap": "^15.0.11",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
     "eslint": "^8.57.0",
@@ -47,7 +46,7 @@
     "express": "^4.19.2",
     "prettier": "^3.3.0",
     "supertest": "^7.0.0",
-    "tap": "^19.0.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.4.5"
   }
 }
