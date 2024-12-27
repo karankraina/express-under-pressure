@@ -1,6 +1,6 @@
 {
   "name": "express-under-pressure",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Express Under Pressure",
   "main": "lib/index.js",
   "type": "commonjs",
