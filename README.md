@@ -97,6 +97,35 @@ router.get('/', (request, response) => {
 
 ```
 
+To add a custom response handler for requests under pressure, you can pass `pressureHandler` like
+
+```typescript
+
+import { pressureReason, pressureType, underPressure } from 'express-under-pressure';
+
+function pressureHandler(request, response) {
+	// A detailed reason why this handler was called.
+	const reason = response.locals[pressureReason];
+	// Metric type that was breached.
+	const type = response.locals[pressureType];
+
+	logger.error(`Server Under Pressure - ${reason}`);
+
+	response.setHeader('Retry-After', 10);
+	response.setHeader('X-Under-Pressure-Type', type);
+	response.status(503).send('Server under pressure!');
+
+}
+
+underPressure(router, {
+	maxEventLoopDelay: 1000, // Maximum event loop delay in milliseconds
+	maxHeapUsedBytes: 200 * 1024 * 1024, // Maximum heap used in bytes
+	maxRssBytes: 300 * 1024 * 1024, // Maximum RSS memory used in bytes
+	maxEventLoopUtilization: 0.98, // Maximum event loop utilisation
+	pressureHandler,
+});
+```
+
 
 ## Middleware Options
 
