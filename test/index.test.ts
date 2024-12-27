@@ -1,4 +1,4 @@
-import { test } from 'tap';
+import { test, TestContext } from 'node:test';
 import express, { Request, Response } from 'express';
 import request from 'supertest';
 import { promisify } from 'util';
@@ -13,8 +13,8 @@ test('middleware should allow requests when system is not under pressure', async
   app.get('/', (req, res) => res.send('ok'));
 
   const response = await request(app).get('/');
-  t.equal(response.status, 200);
-  t.equal(response.text, 'ok');
+  t.assert.deepEqual(response.status, 200);
+  t.assert.deepEqual(response.text, 'ok');
 });
 
 test('middleware should block requests when heap usage is high', async (t) => {
@@ -24,9 +24,9 @@ test('middleware should block requests when heap usage is high', async (t) => {
 
   const response = await request(app).get('/');
 
-  t.equal(response.status, 503);
-  t.equal(response.text, 'Service Unavailable');
-  t.equal(response.headers['retry-after'], '10');
+  t.assert.deepEqual(response.status, 503);
+  t.assert.deepEqual(response.text, 'Service Unavailable');
+  t.assert.deepEqual(response.headers['retry-after'], '10');
 });
 
 test('middleware should block requests when RSS usage is high', async (t) => {
@@ -35,9 +35,9 @@ test('middleware should block requests when RSS usage is high', async (t) => {
   app.get('/', (req, res) => res.send('ok'));
 
   const response = await request(app).get('/');
-  t.equal(response.status, 503);
-  t.equal(response.text, 'Service Unavailable');
-  t.equal(response.headers['retry-after'], '10');
+  t.assert.deepEqual(response.status, 503);
+  t.assert.deepEqual(response.text, 'Service Unavailable');
+  t.assert.deepEqual(response.headers['retry-after'], '10');
 });
 
 test('middleware should return custom response message (if passed)', async (t) => {
@@ -47,9 +47,9 @@ test('middleware should return custom response message (if passed)', async (t) =
   app.get('/', (req, res) => res.send('ok'));
 
   const response = await request(app).get('/');
-  t.equal(response.status, 503);
-  t.equal(response.text, message);
-  t.equal(response.headers['retry-after'], '10');
+  t.assert.deepEqual(response.status, 503);
+  t.assert.deepEqual(response.text, message);
+  t.assert.deepEqual(response.headers['retry-after'], '10');
 });
 
 test('middleware should return proper retry-after header (if passed)', async (t) => {
@@ -59,12 +59,12 @@ test('middleware should return proper retry-after header (if passed)', async (t)
   app.get('/', (req, res) => res.send('ok'));
 
   const response = await request(app).get('/');
-  t.equal(response.status, 503);
-  t.equal(response.text, 'Service Unavailable');
-  t.equal(response.headers['retry-after'], '20');
+  t.assert.deepEqual(response.status, 503);
+  t.assert.deepEqual(response.text, 'Service Unavailable');
+  t.assert.deepEqual(response.headers['retry-after'], '20');
 });
 
-test('middleware should execute custom pressure handler', async (t) => {
+test('middleware should execute custom pressure handler', async (t: TestContext) => {
   const app = express();
 
   const STATUS = 500;
@@ -73,10 +73,12 @@ test('middleware should execute custom pressure handler', async (t) => {
   underPressure(app, {
     maxHeapUsedBytes: 10,
     pressureHandler: (request: Request, response: Response) => {
-      t.ok(
+      t.assert.ok(
         (response.locals as Record<string | symbol, unknown>)[pressureReason],
       );
-      t.ok((response.locals as Record<string | symbol, unknown>)[pressureType]);
+      t.assert.ok(
+        (response.locals as Record<string | symbol, unknown>)[pressureType],
+      );
       response.setHeader('Retry-After', '10');
       response.status(STATUS).send(MESSAGE);
       return true;
@@ -87,9 +89,9 @@ test('middleware should execute custom pressure handler', async (t) => {
 
   const response = await request(app).get('/');
 
-  t.equal(response.status, STATUS);
-  t.equal(response.text, MESSAGE);
-  t.equal(response.headers['retry-after'], '10');
+  t.assert.deepEqual(response.status, STATUS);
+  t.assert.deepEqual(response.text, MESSAGE);
+  t.assert.deepEqual(response.headers['retry-after'], '10');
 });
 
 test('middleware should throw if custom pressure handler is not function', async (t) => {
@@ -108,7 +110,7 @@ test('middleware should throw if custom pressure handler is not function', async
 
     request(app).get('/');
   } catch (error) {
-    t.equal(error.message, ERROR_MESSAGE);
+    t.assert.deepEqual(error.message, ERROR_MESSAGE);
   }
 });
 
@@ -131,9 +133,9 @@ test('middleware should override retry-after if custom pressure handler is passe
 
   const response = await request(app).get('/');
 
-  t.equal(response.status, STATUS);
-  t.equal(response.text, MESSAGE);
-  t.equal(response.headers['retry-after'], '40');
+  t.assert.deepEqual(response.status, STATUS);
+  t.assert.deepEqual(response.text, MESSAGE);
+  t.assert.deepEqual(response.headers['retry-after'], '40');
 });
 
 test('working with event Loop delay', async (t) => {
@@ -150,9 +152,9 @@ test('working with event Loop delay', async (t) => {
   await wait(500);
 
   const response = await request(app).get('/');
-  t.equal(response.status, 503);
-  t.equal(response.text, 'Service Unavailable');
-  t.equal(response.headers['retry-after'], '20');
+  t.assert.deepEqual(response.status, 503);
+  t.assert.deepEqual(response.text, 'Service Unavailable');
+  t.assert.deepEqual(response.headers['retry-after'], '20');
 });
 
 test('isUnderPressure should be made available to app.locals', async (t) => {
@@ -165,8 +167,8 @@ test('isUnderPressure should be made available to app.locals', async (t) => {
   });
 
   app.get('/', (request, response) => {
-    t.ok(response.locals.isUnderPressure);
-    t.equal(typeof response.locals.isUnderPressure, 'function');
+    t.assert.ok(response.locals.isUnderPressure);
+    t.assert.deepEqual(typeof response.locals.isUnderPressure, 'function');
     response.end();
   });
 
