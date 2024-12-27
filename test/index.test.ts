@@ -174,3 +174,26 @@ test('isUnderPressure should be made available to app.locals', async (t: TestCon
 
   await request(app).get('/');
 });
+
+test('should not add metrics check if agent is disabled', async (t: TestContext) => {
+  const app = express();
+
+  const STATUS_200 = 200;
+  const MESSAGE = 'ok';
+
+  underPressure(app, {
+    disableCheck: true,
+    maxEventLoopDelay: 0.01,
+    maxHeapUsedBytes: 100,
+    retryAfter: 20,
+  });
+
+  app.get('/', (request, response) => {
+    response.send(MESSAGE);
+  });
+
+  const response = await request(app).get('/');
+
+  t.assert.deepEqual(response.status, STATUS_200);
+  t.assert.deepEqual(response.text, MESSAGE);
+});
