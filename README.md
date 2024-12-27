@@ -20,6 +20,7 @@ This is an Express JS alternative for [@fastify/under-pressure](https://github.c
 - Monitors resident set size (RSS) memory usage
 - Configurable thresholds for all metrics
 - Customizable response message or even custom response handlers for under pressure requests.
+- Toggle to disable agent via a config option.
 
 ## Installation
 
@@ -137,7 +138,8 @@ The `underPressure` function takes express app instance and an options object wi
 - `maxEventLoopUtilization` (number): The maximum event loop utilisation. Disabled if set to 0 or undefined.
 - `message` (string): Optional. The message to send when the server is under pressure.
 - `pressureHandler` (function): Custom handler for under-pressure requests. If set, `message` is ignored.
-- `retryAfter` (number): Optional. The value for Retry-After header..
+- `retryAfter` (number): Optional. The value for Retry-After header.
+- `disableCheck` (boolean): Optional. Disables the middleware entirely if set to true. Defaults to false.
 
 ## Contributing
 

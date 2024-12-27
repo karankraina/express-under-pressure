@@ -16,6 +16,7 @@ export const TYPE_RSS_BYTES = 'rssBytes';
 export const TYPE_EVENT_LOOP_UTILIZATION = 'eventLoopUtilization';
 
 interface MiddlewareOptions {
+  disableCheck?: boolean;
   maxEventLoopDelay?: number;
   maxEventLoopUtilization?: number;
   maxHeapUsedBytes?: number;
@@ -35,6 +36,7 @@ export function underPressure(
   opts: MiddlewareOptions = {},
 ): void {
   const resolution = 10;
+  const disableCheck = opts.disableCheck || false;
   const sampleInterval = opts.sampleInterval || 1000;
   const maxEventLoopDelay = opts.maxEventLoopDelay || 0;
   const maxHeapUsedBytes = opts.maxHeapUsedBytes || 0;
@@ -47,6 +49,10 @@ export function underPressure(
   const checkMaxRssBytes = maxRssBytes > 0;
   const checkMaxEventLoopUtilization = maxEventLoopUtilization > 0;
   const pressureHandler = opts.pressureHandler || null;
+
+  if (disableCheck) {
+    return;
+  }
 
   if (
     checkMaxEventLoopUtilization === false &&
