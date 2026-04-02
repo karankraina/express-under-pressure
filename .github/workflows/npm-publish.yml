@@ -4,6 +4,7 @@
 name: Node.js Package
 
 permissions:
+  id-token: write  # Required for OIDC
   contents: read
 
 on:
@@ -33,5 +34,3 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
